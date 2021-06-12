@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whack a Mole</title>
+    <style>
+        html {
+    font-size: 35px;
+    background: #98BCF4;
+    }
+
+    body {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    }
+
+     .btnStart{
+         height: 80px;
+         width: 120px;
+         background-color: red;
+         color: #fff;
+         font-size: .8em;
+     }
+     .score{
+         background-color: red;
+         color: #fff;
+         height: 35px;
+         width: 35px;
+         border-radius: 50%;
+         line-height: 40px;
+     }
+
+     .hideout{
+        display: inline-block;
+        margin: 10px;
+        width: 30%;
+        height: 100px;
+        overflow: hidden;
+        position: relative;
+     }
+
+     .badGuy{
+        background-image: url(mole.png);
+        z-index: 1;
+        background-size: cover;
+        position: absolute;
+        height: 100px;
+        top: 100px;
+        left: 60px;
+        width: 100px;
+        cursor: crosshair;
+        transition: all 0.4s;
+     }
+
+     .bricks{
+        background-image: url(dirt.png);
+        background-size: cover;
+        z-index: 10;
+        position: absolute;
+        height: 50px;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+     }
+
+     .hideout.up .badGuy{
+         top: 0;
+     }
+
+  
+    </style>    
+</head>
+<body>
+
+    <div class="score">0</div>
+    <button class="btnStart">Start Game</button>
+    <div class="gameBoard"></div>
+   
+
+    <script>
+           const container = document.querySelector('.gameBoard');
+            const scoreBoard = document.querySelector('.score');
+            const btnStart = document.querySelector('.btnStart');
+          
+            let lasthideout = false;
+            let hideOutsCreated = 6;
+            let score;
+
+            btnStart.addEventListener('click', startGame);
+
+            function startGame(){
+                btnStart.style.display = 'none';
+                container.innerHTML = '';
+                score = 0;
+                makeGameBoard();
+                startBadGuys();
+            }
+
+            function makeGameBoard(){
+
+                for(let x = 0; x<hideOutsCreated;x++){
+                    let div = document.createElement('div');
+                    div.classList.add('hideout');
+                    div.badGuyId = x;
+
+                    let badGuy = document.createElement('div');
+                    badGuy.classList.add('badGuy');
+                    badGuy.addEventListener('click', myShot);
+                    div.appendChild(badGuy);
+
+                    let bricks = document.createElement('div');
+                    bricks.classList.add('bricks');
+                    div.appendChild(bricks);
+
+                    container.appendChild(div);
+                }
+            }
+
+            function startBadGuys(){
+                
+                let hideout = randomUp();
+                hideout.classList.add('up');
+
+                setTimeout(function(){
+                    hideout.classList.remove('up');
+                    startBadGuys();
+                },1200)
+            }
+
+            function randomUp(){
+                const hideouts = document.querySelectorAll('.hideout');
+                const idx = Math.floor(Math.random()*hideouts.length);
+
+                if(hideouts[idx].badGuyId === lasthideout){
+                    return randomUp();
+                }
+                lasthideout = hideouts[idx].badGuyId;
+                return hideouts[idx];
+            }
+
+            function myShot(){
+                score++;
+                scoreBoard.innerHTML = score;
+            }
+        
+    </script>
+</body>
+</html>
